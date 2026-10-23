@@ -22,8 +22,8 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Langsung redirect ke halaman utama (ONE MOVIES) setelah berhasil login
-            return redirect()->intended('/')->with('success', 'Berhasil login!');
+            // Langsung redirect ke dashboard admin atau halaman yang dituju
+            return redirect()->intended(route('admin.films.index'))->with('success', 'Berhasil login!');
         }
 
         // Jika login gagal
@@ -52,8 +52,8 @@ class AuthController extends Controller
         // Otomatis login setelah berhasil terdaftar
         Auth::login($user);
 
-        // Arahkan ke halaman utama
-        return redirect('/')->with('success', 'Akun berhasil dibuat!');
+        // Arahkan ke dashboard
+        return redirect()->route('admin.films.index')->with('success', 'Akun berhasil dibuat!');
     }
 
     // Fungsi untuk Logout

@@ -38,7 +38,7 @@
           <div class="single-right-grids">
 
             <div class="col-md-4 single-right-grid-left">
-              <a href="{{ route('movies.show', $film->id) }}"><img src="/{{ $film->poster }}" alt="" /></a>
+              <a href="{{ route('movies.show', $film->id) }}"><img src="{{ asset($film->poster) }}" alt="{{ $film->title }}" /></a>
             </div>
             <div class="col-md-8 single-right-grid-right">
               <div class="song-info">
@@ -49,26 +49,41 @@
               <div id="myTabContent" class="tab-content">
                 <div role="tabpanel" class="tab-pane fade in active" id="home" aria-labelledby="home-tab">
                   <div class="agile-news-table">
+                    <h4 style="margin-top:10px;">Pemeran (Cast)</h4>
                     <table id="table-breakpoint">
-                      <thead>
+                      <thead style="background-color: #ff9800; color: #ffffff;">
                         <tr>
                         <th>Cast</th>
                         <th>Peran</th>
                         </tr>
                       </thead>
                       <tbody>
-                        @foreach ($perans as $peran)
+                        @forelse ($film->cast as $pemeran)
                         <tr>
-                          <td class="w3-list-info">{{ $peran->cast_id }}</td>
-                          <td class="w3-list-info">{{ $peran->actor }}</td>
+                          <td class="w3-list-info">{{ $pemeran->nama ?? $pemeran->name }}</td>
+                          <td class="w3-list-info">{{ $pemeran->pivot->actor ?? '-' }}</td>
                         </tr>
-                        @endforeach
+                        @empty
+                        @forelse ($perans as $peran)
+                        <tr>
+                          <td class="w3-list-info">{{ $peran->cast ? $peran->cast->name : $peran->cast_id }}</td>
+                          <td class="w3-list-info">{{ $peran->actor ?? '-' }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                          <td colspan="2">Belum ada data pemeran untuk film ini.</td>
+                        </tr>
+                        @endforelse
+                        @endforelse
+
                       </tbody>
                     </table>
+
                   </div>
                 </div>
               </div>
             </div>
+
             <div class="clearfix"> </div>
           </div>
         </div>
@@ -151,7 +166,7 @@
           <div class="single-grid-right">
             <div class="single-right-grids">
               <div class="col-md-4 single-right-grid-left">
-                <a href="{{ route('movies.show', $film->id) }}"><img src="/{{ $film->poster }}" alt="" /></a>
+                <a href="{{ route('movies.show', $film->id) }}"><img src="{{ asset($film->poster) }}" alt="{{ $film->title }}" /></a>
               </div>
               <div class="col-md-8 single-right-grid-right">
                 <a href="{{ route('movies.show', $film->id) }}" class="title">{{ $film->title }}</a>
@@ -172,7 +187,7 @@
         @foreach ($filmByRelease as $filmRelease)
           <div class="item">
             <div class="w3l-movie-gride-agile w3l-movie-gride-agile1">
-              <a href="{{ route('movies.show', $filmRelease->id) }}" class="hvr-shutter-out-horizontal"><img src="/{{ $filmRelease->poster }}" title="{{ $filmRelease->title }}" class="img-responsive" alt=" " />
+              <a href="{{ route('movies.show', $filmRelease->id) }}" class="hvr-shutter-out-horizontal"><img src="{{ asset($filmRelease->poster) }}" title="{{ $filmRelease->title }}" class="img-responsive" alt="{{ $filmRelease->title }}" />
                 <div class="w3l-action-icon"><i class="fa fa-play-circle" aria-hidden="true"></i></div>
               </a>
               <div class="mid-1 agileits_w3layouts_mid_1_home">

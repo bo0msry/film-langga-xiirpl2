@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-
+use App\Models\Cast;
+use App\Models\Film;
 use App\Models\Peran;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class PeranSeeder extends Seeder
 {
@@ -15,15 +15,30 @@ class PeranSeeder extends Seeder
      */
     public function run(): void
     {
-        //
         $faker = Faker::create('id_ID');
-        for($loop = 1; $loop <= 300; $loop++)
-        {
-            Peran::create([
-                "film_id"    => $faker->numberBetween(1,128),
-                "cast_id"    => $faker->numberBetween(1,50),
-                "actor"      => $faker->jobTitle,
-            ]);
+        $castIds = Cast::pluck('id');
+
+        if ($castIds->isEmpty()) {
+            $this->command?->warn('PeranSeeder: data cast belum tersedia, data dilewati.');
+
+            return;
+        }
+
+        // Pastikan setiap film memiliki minimal tiga pemeran di tabel pivot perans.
+        foreach (Film::all() as $film) {
+            $castForFilm = $castIds->shuffle()->take(min(3, $castIds->count()));
+
+            foreach ($castForFilm as $castId) {
+                Peran::updateOrCreate(
+                    [
+                        'film_id' => $film->id,
+                        'cast_id' => $castId,
+                    ],
+                    [
+                        'actor' => $faker->jobTitle,
+                    ]
+                );
+            }
         }
     }
 }
