@@ -25,6 +25,6 @@ Route::post('/movies/{film}/comments', [KritikController::class, 'store'])
     ->name('kritik.store');
 
 // Route Dashboard Admin CRUD (Dibutuhkan login)
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('films', AdminFilmController::class);
 });

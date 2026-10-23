@@ -12,7 +12,9 @@
     <div class="w3l_sign_in_register">
       <ul>
         @auth
-          <li><a href="{{ route('admin.films.index') }}">DASHBOARD</a></li>
+          @if (Auth::user()->isAdmin())
+            <li><a href="{{ route('admin.films.index') }}">DASHBOARD</a></li>
+          @endif
           <li>
             <form action="{{ route('logout') }}" method="POST" style="display:inline;">
               @csrf

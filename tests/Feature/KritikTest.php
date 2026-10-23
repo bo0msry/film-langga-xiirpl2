@@ -99,7 +99,8 @@ class KritikTest extends TestCase
 
     public function test_authenticated_header_shows_the_dashboard_and_logout_actions(): void
     {
-        $user = User::query()->firstOrFail();
+        $user = User::where('email', 'admin@gmail.com')->firstOrFail();
+        $user->load('role');
 
         $response = $this->actingAs($user)->get(route('home'));
 

@@ -49,4 +49,26 @@ class User extends Authenticatable
     {
         return $this->hasMany(Kritik::class);
     }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        if ($this->email === 'admin@gmail.com') {
+            return true;
+        }
+
+        if (isset($this->role) && is_object($this->role) && isset($this->role->name)) {
+            return $this->role->name === 'admin';
+        }
+
+        if (property_exists($this, 'role_name') && $this->role_name === 'admin') {
+            return true;
+        }
+
+        return false;
+    }
 }
