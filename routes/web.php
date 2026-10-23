@@ -21,7 +21,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Route Komentar (Harus Login)
 Route::middleware(['auth'])->group(function () {
-    Route::post('/movies/{film}/comment', [KritikController::class, 'store'])->name('kritik.store');
+    Route::post('/movies/{film}/comments', [KritikController::class, 'store'])->name('kritik.store');
 });
 
 // Route Dashboard Admin CRUD (Dibutuhkan login)

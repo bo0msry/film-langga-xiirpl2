@@ -62,4 +62,9 @@ class Film extends Model
             ->withPivot('role')
             ->withTimestamps();
     }
+
+    public function kritik()
+    {
+        return $this->hasMany(Kritik::class);
+    }
 }

@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-
 use App\Models\Kritik;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class KritikSeeder extends Seeder
 {
@@ -19,13 +17,11 @@ class KritikSeeder extends Seeder
         // Kritik::create(1000)->create();
 
         $faker = Faker::create('id_ID');
-        for($loop = 1; $loop <= 1000; $loop++)
-        {
+        for ($loop = 1; $loop <= 1000; $loop++) {
             Kritik::create([
-                'comment'   => $faker->text($maxNbChars = 200),
-                'rating'    => $faker->numberBetween(1,5),
-                'film_id'   => $faker->numberBetween(1,128),
-                'user_id'   => $faker->numberBetween(1,10),
+                'isi' => $faker->text($maxNbChars = 200),
+                'film_id' => $faker->numberBetween(1, 128),
+                'user_id' => $faker->numberBetween(1, 10),
             ]);
         }
     }

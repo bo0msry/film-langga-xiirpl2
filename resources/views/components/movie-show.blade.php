@@ -132,31 +132,50 @@
         <div class="all-comments">
           <div class="all-comments-info">
             <a href="#">Comments</a>
-            <div class="agile-info-wthree-box">
-              <form>
-                <input type="text" placeholder="Name" required="">			           					   
-                <input type="text" placeholder="Email" required="">
-                <input type="text" placeholder="Phone" required="">
-                <textarea placeholder="Message" required=""></textarea>
-                <input type="submit" value="SEND">
-                <div class="clearfix"> </div>
-              </form>
-            </div>
+            @if(session('success'))
+              <div class="alert alert-success" style="margin-top: 15px;">{{ session('success') }}</div>
+            @endif
+            @auth
+              <div class="agile-info-wthree-box">
+                <form action="{{ route('kritik.store', $film->id) }}" method="POST">
+                  @csrf
+                  <input type="text" value="{{ auth()->user()->name }}" readonly>
+                  <textarea name="isi" placeholder="Message" required>{{ old('isi') }}</textarea>
+                  @error('isi')
+                    <div class="text-danger" style="margin-bottom: 10px;">{{ $message }}</div>
+                  @enderror
+                  <input type="submit" value="SEND">
+                  <div class="clearfix"> </div>
+                </form>
+              </div>
+            @else
+              <div class="agile-info-wthree-box">
+                <p style="margin-bottom: 15px;">Silakan Login terlebih dahulu untuk menulis komentar.</p>
+                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Login</a>
+              </div>
+            @endauth
           </div>
           <div class="media-grids">
-            @foreach ($comments as $comment)
+            @forelse ($film->kritik->sortByDesc('created_at') as $komentar)
               <div class="media">
-                <h5>{{ $comment->user_id }}</h5>
+                <h5>{{ $komentar->user?->name ?? 'Pengguna' }}</h5>
                 <div class="media-left">
                   <a href="#">
                     <img src="{{ asset('storage/images/user.jpg') }}" title="One movies" alt=" " />
                   </a>
                 </div>
                 <div class="media-body">
-                  <p>{{ $comment->comment }}</p>
+                  <p>{{ $komentar->isi }}</p>
+                  <small>{{ $komentar->created_at->format('d M Y, H:i') }}</small>
                 </div>
               </div>
-            @endforeach
+            @empty
+              <div class="media">
+                <div class="media-body">
+                  <p>Belum ada komentar.</p>
+                </div>
+              </div>
+            @endforelse
           </div>
         </div>
       </div>

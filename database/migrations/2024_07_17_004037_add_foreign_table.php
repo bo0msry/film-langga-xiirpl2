@@ -26,11 +26,6 @@ return new class extends Migration
             $table->foreignId('cast_id')->constrained();
             $table->foreignId('film_id')->constrained();
         });
-        // add foreign keys on table kritiks
-        Schema::table('kritiks', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('film_id')->constrained();
-        });
     }
 
     /**
@@ -55,13 +50,6 @@ return new class extends Migration
             $table->dropForeign(['film_id']);
             $table->dropForeign(['cast_id']);
             $table->dropColumn('cast_id');
-            $table->dropColumn('film_id');
-        });
-        // add foreign keys on table kritiks
-        Schema::table('kritiks', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropForeign(['film_id']);
-            $table->dropColumn('user_id');
             $table->dropColumn('film_id');
         });
         // drop all tables
