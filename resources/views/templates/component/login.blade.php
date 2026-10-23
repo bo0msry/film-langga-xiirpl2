@@ -30,9 +30,12 @@
               <!-- FORM REGISTER -->
               <div class="form">
               <h3>Create an account</h3>
-              <form action="{{ route('register') }}" method="post">
+              <form action="{{ route('register.store') }}" method="post">
                 @csrf
-                <input type="text" name="name" placeholder="Username" required="">
+                @if (request()->routeIs('movies.show'))
+                  <input type="hidden" name="redirect" value="{{ url()->current() }}">
+                @endif
+                <input type="text" name="name" placeholder="Nama" required="">
                 <input type="email" name="email" placeholder="Email Address" required="">
                 <input type="password" name="password" placeholder="Password" required="">
                 <input type="password" name="password_confirmation" placeholder="Confirm Password" required="">

@@ -20,7 +20,7 @@
             </form>
           </li>
         @else
-          <li><a href="#" data-toggle="modal" data-target="#myModal">LOGIN / REGISTER</a></li>
+          <li><a href="{{ route('login') }}">LOGIN / REGISTER</a></li>
         @endauth
       </ul>
     </div>

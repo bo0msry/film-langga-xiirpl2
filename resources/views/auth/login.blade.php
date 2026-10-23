@@ -29,6 +29,10 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Login</button>
                 <a href="{{ route('home') }}" class="btn btn-default">Kembali</a>
+                <p style="margin-top: 15px;">
+                    Belum punya akun?
+                    <a href="{{ route('register', request('redirect') ? ['redirect' => request('redirect')] : []) }}">Daftar sekarang</a>
+                </p>
             </form>
         </div>
     </div>

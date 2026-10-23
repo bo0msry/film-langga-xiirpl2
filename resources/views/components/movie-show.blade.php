@@ -151,8 +151,8 @@
             @endauth
             @guest
               <div class="agile-info-wthree-box">
-                <p style="margin-bottom: 15px;">Silakan login terlebih dahulu melalui menu utama untuk menulis komentar.</p>
-                <a href="{{ route('login', ['redirect' => url()->current()]) }}" class="btn btn-primary">LOGIN</a>
+                <p style="margin-bottom: 15px;">Silakan Login terlebih dahulu untuk menulis komentar.</p>
+                <a href="{{ route('login', ['redirect' => url()->current()]) }}" class="btn btn-primary">LOGIN / REGISTER</a>
               </div>
             @endguest
           </div>

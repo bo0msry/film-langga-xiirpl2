@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\Film;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class KritikTest extends TestCase
@@ -64,9 +66,9 @@ class KritikTest extends TestCase
         $response = $this->get(route('movies.show', $film->id));
 
         $response->assertOk();
-        $response->assertSee('Silakan login terlebih dahulu melalui menu utama untuk menulis komentar.');
+        $response->assertSee('Silakan Login terlebih dahulu untuk menulis komentar.');
         $response->assertSee(route('login', ['redirect' => route('movies.show', $film->id)]), false);
-        $response->assertSee('>LOGIN</a>', false);
+        $response->assertSee('>LOGIN / REGISTER</a>', false);
         $response->assertSee('name="redirect"', false);
         $response->assertDontSee('name="isi"', false);
     }
@@ -147,5 +149,61 @@ class KritikTest extends TestCase
         $response->assertSee('name="email"', false);
         $response->assertSee('name="password"', false);
         $response->assertSee('name="redirect"', false);
+    }
+
+    public function test_the_registration_page_is_accessible_with_a_redirect_url(): void
+    {
+        $film = Film::query()->firstOrFail();
+
+        $response = $this->get(route('register', [
+            'redirect' => route('movies.show', $film->id),
+        ]));
+
+        $response->assertOk();
+        $response->assertSee('name="name"', false);
+        $response->assertSee('name="email"', false);
+        $response->assertSee('name="password"', false);
+        $response->assertSee('name="password_confirmation"', false);
+        $response->assertSee('name="redirect"', false);
+    }
+
+    public function test_new_users_can_register_and_are_logged_in_automatically(): void
+    {
+        $email = Str::lower(Str::random(12)).'@example.com';
+
+        $response = $this->post(route('register.store'), [
+            'name' => 'Pendaftar Baru',
+            'email' => $email,
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertRedirect(route('home'));
+        $this->assertAuthenticated();
+
+        $user = User::query()->where('email', $email)->firstOrFail();
+
+        $this->assertSame('Pendaftar Baru', $user->name);
+        $this->assertNotNull($user->role_id);
+        $this->assertNotNull($user->profile_id);
+        $this->assertNotNull($user->email_verified_at);
+        $this->assertTrue(Hash::check('password123', $user->password));
+    }
+
+    public function test_registration_redirects_back_to_the_film_page_when_redirect_is_supplied(): void
+    {
+        $film = Film::query()->firstOrFail();
+        $email = Str::lower(Str::random(12)).'@example.com';
+
+        $response = $this->post(route('register.store'), [
+            'name' => 'Pendaftar Film',
+            'email' => $email,
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'redirect' => route('movies.show', $film->id),
+        ]);
+
+        $response->assertRedirect(route('movies.show', $film->id));
+        $this->assertAuthenticated();
     }
 }

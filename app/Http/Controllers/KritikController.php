@@ -32,7 +32,7 @@ class KritikController extends Controller
     public function store(StoreKritikRequest $request, Film $film)
     {
         $film->kritik()->create([
-            'user_id' => Auth::user()->id,
+            'user_id' => Auth::id(),
             'isi' => $request->validated('isi'),
         ]);
 

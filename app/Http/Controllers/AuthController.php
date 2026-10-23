@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -13,6 +16,12 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         return view('auth.login');
+    }
+
+    // Menampilkan halaman registrasi akun baru
+    public function showRegisterForm()
+    {
+        return view('auth.register');
     }
 
     // Fungsi untuk memproses Login
@@ -54,24 +63,49 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         // Validasi input register
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
-        // Simpan user baru ke database
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        // Buat akun beserta profil dan role default dalam satu transaksi.
+        $user = DB::transaction(function () use ($validated) {
+            $role = Role::firstOrCreate(['name' => 'user']);
+
+            $profile = Profile::forceCreate([
+                'alamat' => '',
+                'umur' => 0,
+                'bio' => '',
+            ]);
+
+            return User::forceCreate([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'email_verified_at' => now(),
+                'role_id' => $role->id,
+                'profile_id' => $profile->id,
+            ]);
+        });
 
         // Otomatis login setelah berhasil terdaftar
         Auth::login($user);
+        $request->session()->regenerate();
 
-        // Arahkan ke dashboard
-        return redirect()->route('admin.films.index')->with('success', 'Akun berhasil dibuat!');
+        $redirect = $request->input('redirect');
+
+        // Kembali ke halaman asal hanya jika URL masih mengarah ke host yang sama.
+        if (is_string($redirect) && $redirect !== '') {
+            $redirectHost = parse_url($redirect, PHP_URL_HOST);
+            $redirectScheme = parse_url($redirect, PHP_URL_SCHEME);
+
+            if ($redirectHost === $request->getHost() && in_array($redirectScheme, ['http', 'https'], true)) {
+                return redirect()->to($redirect)->with('success', 'Akun berhasil dibuat!');
+            }
+        }
+
+        return redirect()->route('home')->with('success', 'Akun berhasil dibuat!');
     }
 
     // Fungsi untuk Logout
