@@ -137,23 +137,24 @@
             @endif
             @auth
               <div class="agile-info-wthree-box">
+                <p style="margin-bottom: 15px;">Login sebagai: <strong>{{ Auth::user()->name }}</strong></p>
                 <form action="{{ route('kritik.store', $film->id) }}" method="POST">
                   @csrf
-                  <input type="text" value="{{ auth()->user()->name }}" readonly>
                   <textarea name="isi" placeholder="Message" required>{{ old('isi') }}</textarea>
                   @error('isi')
                     <div class="text-danger" style="margin-bottom: 10px;">{{ $message }}</div>
                   @enderror
-                  <input type="submit" value="SEND">
+                  <input type="submit" value="Kirim Komentar">
                   <div class="clearfix"> </div>
                 </form>
               </div>
-            @else
-              <div class="agile-info-wthree-box">
-                <p style="margin-bottom: 15px;">Silakan Login terlebih dahulu untuk menulis komentar.</p>
-                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Login</a>
-              </div>
             @endauth
+            @guest
+              <div class="agile-info-wthree-box">
+                <p style="margin-bottom: 15px;">Silakan login terlebih dahulu melalui menu utama untuk menulis komentar.</p>
+                <a href="{{ route('login', ['redirect' => url()->current()]) }}" class="btn btn-primary">Login untuk Berkomentar</a>
+              </div>
+            @endguest
           </div>
           <div class="media-grids">
             @forelse ($film->kritik->sortByDesc('created_at') as $komentar)
