@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+class AuthController extends Controller
+{
+    // Fungsi untuk memproses Login
+    public function login(Request $request)
+    {
+        // Validasi input dari form
+        $credentials = $request->validate([
+            'email'    => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        // Cek login ke database
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            // Langsung redirect ke halaman utama (ONE MOVIES) setelah berhasil login
+            return redirect()->intended('/')->with('success', 'Berhasil login!');
+        }
+
+        // Jika login gagal
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ])->onlyInput('email');
+    }
+
+    // Fungsi untuk memproses Register (Pendaftaran Akun Baru)
+    public function register(Request $request)
+    {
+        // Validasi input register
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        // Simpan user baru ke database
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Otomatis login setelah berhasil terdaftar
+        Auth::login($user);
+
+        // Arahkan ke halaman utama
+        return redirect('/')->with('success', 'Akun berhasil dibuat!');
+    }
+
+    // Fungsi untuk Logout
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/')->with('success', 'Berhasil logout!');
+    }
+}
