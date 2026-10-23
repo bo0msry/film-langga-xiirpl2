@@ -140,11 +140,11 @@
                 <p style="margin-bottom: 15px;">Login sebagai: <strong>{{ Auth::user()->name }}</strong></p>
                 <form action="{{ route('kritik.store', $film->id) }}" method="POST">
                   @csrf
-                  <textarea name="isi" placeholder="Message" required>{{ old('isi') }}</textarea>
+                  <textarea name="isi" placeholder="Tulis komentar/ulasan Anda..." required>{{ old('isi') }}</textarea>
                   @error('isi')
                     <div class="text-danger" style="margin-bottom: 10px;">{{ $message }}</div>
                   @enderror
-                  <input type="submit" value="Kirim Komentar">
+                  <input type="submit" value="SEND">
                   <div class="clearfix"> </div>
                 </form>
               </div>
@@ -152,22 +152,22 @@
             @guest
               <div class="agile-info-wthree-box">
                 <p style="margin-bottom: 15px;">Silakan login terlebih dahulu melalui menu utama untuk menulis komentar.</p>
-                <a href="{{ route('login', ['redirect' => url()->current()]) }}" class="btn btn-primary">Login untuk Berkomentar</a>
+                <a href="{{ route('login', ['redirect' => url()->current()]) }}" class="btn btn-primary">LOGIN</a>
               </div>
             @endguest
           </div>
           <div class="media-grids">
-            @forelse ($film->kritik->sortByDesc('created_at') as $komentar)
+            @forelse ($film->kritik->sortByDesc('created_at') as $kritik)
               <div class="media">
-                <h5>{{ $komentar->user?->name ?? 'Pengguna' }}</h5>
+                <h5>{{ $kritik->user->name }}</h5>
                 <div class="media-left">
                   <a href="#">
                     <img src="{{ asset('storage/images/user.jpg') }}" title="One movies" alt=" " />
                   </a>
                 </div>
                 <div class="media-body">
-                  <p>{{ $komentar->isi }}</p>
-                  <small>{{ $komentar->created_at->format('d M Y, H:i') }}</small>
+                  <p>{{ $kritik->isi }}</p>
+                  <small>{{ $kritik->created_at->format('d M Y, H:i') }}</small>
                 </div>
               </div>
             @empty

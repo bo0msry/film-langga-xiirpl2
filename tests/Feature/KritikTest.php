@@ -65,7 +65,8 @@ class KritikTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Silakan login terlebih dahulu melalui menu utama untuk menulis komentar.');
-        $response->assertSee('Login untuk Berkomentar');
+        $response->assertSee(route('login', ['redirect' => route('movies.show', $film->id)]), false);
+        $response->assertSee('>LOGIN</a>', false);
         $response->assertSee('name="redirect"', false);
         $response->assertDontSee('name="isi"', false);
     }
@@ -81,6 +82,29 @@ class KritikTest extends TestCase
         $response->assertSee(route('kritik.store', $film->id), false);
         $response->assertSee($user->name);
         $response->assertSee('name="isi"', false);
+        $response->assertSee('placeholder="Tulis komentar/ulasan Anda..."', false);
+        $response->assertSee('value="SEND"', false);
+    }
+
+    public function test_guest_header_shows_the_login_and_register_action(): void
+    {
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('LOGIN / REGISTER');
+        $response->assertDontSee('DASHBOARD');
+    }
+
+    public function test_authenticated_header_shows_the_dashboard_and_logout_actions(): void
+    {
+        $user = User::query()->firstOrFail();
+
+        $response = $this->actingAs($user)->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee('DASHBOARD');
+        $response->assertSee('LOGOUT');
+        $response->assertDontSee('LOGIN / REGISTER');
     }
 
     public function test_login_redirects_back_to_the_film_page_when_redirect_is_supplied(): void
