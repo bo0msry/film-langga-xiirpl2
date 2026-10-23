@@ -35,7 +35,7 @@
                     <label for="poster">Poster (gambar)</label>
                     @if($film->poster)
                         <div style="margin-bottom: 10px;">
-                            <img src="{{ asset($film->poster) }}" alt="{{ $film->title }}" style="height: 100px;">
+                            <img src="{{ $film->posterUrl() }}" alt="{{ $film->title }}" style="height: 100px;">
                         </div>
                     @endif
                     <input type="file" class="form-control" id="poster" name="poster">

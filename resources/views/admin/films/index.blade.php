@@ -33,7 +33,7 @@
                             <td>{{ ($films->currentPage() - 1) * $films->perPage() + $loop->iteration }}</td>
                             <td>
                                 @if($film->poster)
-                                    <img src="{{ asset($film->poster) }}" alt="{{ $film->title }}" style="height: 80px;">
+                                    <img src="{{ $film->posterUrl() }}" alt="{{ $film->title }}" style="height: 80px;">
                                 @endif
                             </td>
                             <td>{{ $film->title }}</td>

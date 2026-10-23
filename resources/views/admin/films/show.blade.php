@@ -15,7 +15,7 @@
                 <div class="panel-body">
                     @if($film->poster)
                         <div style="margin-bottom: 15px;">
-                            <img src="{{ asset($film->poster) }}" alt="{{ $film->title }}" style="max-height: 300px;">
+                            <img src="{{ $film->posterUrl() }}" alt="{{ $film->title }}" style="max-height: 300px;">
                         </div>
                     @endif
                     <p><strong>Genre:</strong> {{ $film->genre ? $film->genre->name : '-' }}</p>
